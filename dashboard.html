@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Management Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <!-- =========================
+       LOGIN / AUTHENTICATION
+  ========================== -->
+  <section id="loginView" class="auth-page">
+    <div class="auth-card">
+      <div class="brand-mark">BM</div>
+      <h1 data-i18n="loginTitle">Blog Management Dashboard</h1>
+      <p class="muted" data-i18n="loginSubtitle">Frontend internship prototype</p>
+
+      <form id="loginForm" class="form-grid single-column" novalidate>
+        <label>
+          <span data-i18n="username">Username</span>
+          <input id="loginUsername" type="text" autocomplete="username" required />
+        </label>
+        <label>
+          <span data-i18n="password">Password</span>
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+        </label>
+        <label>
+          <span data-i18n="role">Role</span>
+          <select id="loginRole" required>
+            <option value="admin" data-i18n="administrator">Administrator</option>
+            <option value="author" data-i18n="author">Author</option>
+          </select>
+        </label>
+        <button class="btn primary full" type="submit" data-i18n="login">Login</button>
+        <p id="loginMessage" class="form-message" aria-live="polite"></p>
+      </form>
+
+      <div class="demo-box">
+        <strong data-i18n="demoAccounts">Demo accounts</strong>
+        <div><code>admin / admin123</code></div>
+        <div><code>author / author123</code></div>
+      </div>
+
+      <label class="auth-language">
+        <span data-i18n="language">Language</span>
+        <select id="loginLanguage">
+          <option value="en">English</option>
+          <option value="fa">دری</option>
+          <option value="ps">پښتو</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <!-- =========================
+       APPLICATION
+  ========================== -->
+  <div id="appView" class="app-shell hidden">
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <aside id="sidebar" class="sidebar" aria-label="Dashboard navigation">
+      <div class="sidebar-brand">
+        <div class="brand-mark small">BM</div>
+        <div>
+          <strong>Blog Manager</strong>
+          <small id="sidebarRole">Administrator</small>
+        </div>
+      </div>
+
+      <nav id="sidebarNav" class="sidebar-nav">
+        <button class="nav-item admin-only active" data-section="overview"><span>⌂</span><span data-i18n="overview">Dashboard Overview</span></button>
+        <button class="nav-item" data-section="posts"><span>✎</span><span data-i18n="posts">Posts Management</span></button>
+        <button class="nav-item admin-only" data-section="categories"><span>▦</span><span data-i18n="categories">Categories</span></button>
+        <button class="nav-item admin-only" data-section="tags"><span>#</span><span data-i18n="tags">Tags</span></button>
+        <button class="nav-item admin-only" data-section="media"><span>▣</span><span data-i18n="media">Media Library</span></button>
+        <button class="nav-item admin-only" data-section="comments"><span>☵</span><span data-i18n="comments">Comments</span></button>
+        <button class="nav-item admin-only" data-section="users"><span>♙</span><span data-i18n="users">Authors / Users</span></button>
+        <button class="nav-item admin-only" data-section="pages"><span>▤</span><span data-i18n="pages">Pages</span></button>
+        <button class="nav-item admin-only" data-section="appearance"><span>◐</span><span data-i18n="appearance">Appearance</span></button>
+        <button class="nav-item admin-only" data-section="ads"><span>▰</span><span data-i18n="ads">Advertisement Management</span></button>
+        <button class="nav-item admin-only" data-section="seo"><span>⌕</span><span data-i18n="seo">SEO</span></button>
+        <button class="nav-item admin-only" data-section="analytics"><span>▥</span><span data-i18n="analytics">Analytics</span></button>
+        <button class="nav-item admin-only" data-section="notifications"><span>◉</span><span data-i18n="notifications">Notifications</span><span id="notificationBadge" class="badge-count">0</span></button>
+        <button class="nav-item admin-only" data-section="settings"><span>⚙</span><span data-i18n="settings">Settings</span></button>
+        <button class="nav-item admin-only" data-section="logs"><span>☷</span><span data-i18n="logs">System / Logs</span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="sidebarLogout" class="btn ghost full" type="button" data-i18n="logout">Logout</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="menuBtn" class="icon-btn menu-btn" type="button" aria-label="Open menu">☰</button>
+          <div>
+            <p id="breadcrumb" class="breadcrumb">Dashboard / Overview</p>
+            <h1 id="pageTitle" data-i18n="overview">Dashboard Overview</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <label class="compact-control">
+            <span class="sr-only" data-i18n="language">Language</span>
+            <select id="languageSelect">
+              <option value="en">English</option>
+              <option value="fa">دری</option>
+              <option value="ps">پښتو</option>
+            </select>
+          </label>
+          <span id="roleBadge" class="role-badge">Administrator</span>
+          <button id="logoutBtn" class="btn danger-outline" type="button" data-i18n="logout">Logout</button>
+        </div>
+      </header>
+
+      <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+      <div class="content-area">
+        <!-- 1. DASHBOARD OVERVIEW -->
+        <section id="section-overview" class="dashboard-section active admin-only-section">
+          <div class="section-heading">
+            <div>
+              <h2 data-i18n="overview">Dashboard Overview</h2>
+              <p class="muted" data-i18n="overviewDesc">Quick operational summary of the blog.</p>
+            </div>
+          </div>
+
+          <div id="statsGrid" class="stats-grid"></div>
+
+          <div class="two-column-layout">
+            <article class="panel">
+              <div class="panel-head">
+                <h3 data-i18n="recentPosts">Recent Posts</h3>
+              </div>
+              <div id="recentPostsList" class="list-stack"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <h3 data-i18n="trafficViews">Traffic / Views</h3>
+              </div>
+              <div id="trafficChart" class="bar-chart" aria-label="Traffic chart"></div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <h3 data-i18n="recentActivity">Recent Activity</h3>
+            </div>
+            <div id="recentActivityList" class="list-stack compact"></div>
+          </article>
+        </section>
+
+        <!-- 2. POSTS MANAGEMENT -->
+        <section id="section-posts" class="dashboard-section">
+          <div class="section-heading">
+            <div>
+              <h2 data-i18n="posts">Posts Management</h2>
+              <p class="muted" id="postsRoleHint"></p>
+            </div>
+            <button id="addPostBtn" class="btn primary" type="button" data-i18n="addPost">Add New Post</button>
+          </div>
+
+          <div id="postAdminTools" class="toolbar admin-only">
+            <input id="postSearch" type="search" placeholder="Search posts..." data-i18n-placeholder="searchPosts" />
+            <select id="postStatusFilter">
+              <option value="all" data-i18n="allStatuses">All statuses</option>
+              <option value="Draft">Draft</option>
+              <option value="Published">Published</option>
+              <option value="Scheduled">Scheduled</option>
+              <option value="Pending Approval">Pending Approval</option>
+              <option value="Rejected">Rejected</option>
+              <option value="Trash">Trash</option>
+            </select>
+            <select id="postCategoryFilter">
+              <option value="all" data-i18n="allCategories">All categories</option>
+            </select>
+          </div>
+
+          <div id="authorCreateOnlyNotice" class="notice hidden" data-i18n="authorCreateOnly">Author access is limited to creating a new post.</div>
+
+          <div id="postsTableWrap" class="table-wrap admin-only">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="title">Title</th>
+                  <th data-i18n="category">Category</th>
+                  <th data-i18n="status">Status</th>
+                  <th data-i18n="author">Author</th>
+                  <th data-i18n="date">Date</th>
+                  <th data-i18n="views">Views</th>
+                  <th data-i18n="actions">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="postsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. CATEGORIES -->
+        <section id="section-categories" class="dashboard-section admin-only-section">
+          <div class="section-heading">
+            <div><h2 data-i18n="categories">Categories</h2><p class="muted" data-i18n="categoriesDesc">Manage category hierarchy and post counts.</p></div>
+            <button id="addCategoryBtn" class="btn primary" type="button" data-i18n="addCategory">Add Category</button>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="name">Name</th><th data-i18n="parentCategory">Parent Category</th><th data-i18n="postCount">Post Count</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="categoriesTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 4. TAGS -->
+        <section id="section-tags" class="dashboard-section admin-only-section">
+          <div class="section-heading">
+            <div><h2 data-i18n="tags">Tags</h2><p class="muted" data-i18n="tagsDesc">Manage post labels and popularity.</p></div>
+            <button id="addTagBtn" class="btn primary" type="button" data-i18n="addTag">Add Tag</button>
+          </div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="name">Name</th><th data-i18n="postCount">Post Count</th><th data-i18n="popularity">Popularity</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="tagsTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 5. MEDIA LIBRARY -->
+        <section id="section-media" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="media">Media Library</h2><p class="muted" data-i18n="mediaDesc">Manage prototype media records.</p></div><button id="addMediaBtn" class="btn primary" type="button" data-i18n="addMedia">Add Media</button></div>
+          <div class="toolbar"><input id="mediaSearch" type="search" placeholder="Search media..." data-i18n-placeholder="searchMedia" /><select id="mediaTypeFilter"><option value="all" data-i18n="allTypes">All types</option><option value="Image">Image</option><option value="Video">Video</option><option value="Document">Document</option></select></div>
+          <div id="mediaGrid" class="media-grid"></div>
+        </section>
+
+        <!-- 6. COMMENTS -->
+        <section id="section-comments" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="comments">Comments</h2><p class="muted" data-i18n="commentsDesc">Review and moderate comments.</p></div></div>
+          <div class="toolbar"><select id="commentStatusFilter"><option value="all" data-i18n="allStatuses">All statuses</option><option>Pending</option><option>Approved</option><option>Spam</option><option>Trash</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="commenter">Commenter</th><th data-i18n="post">Post</th><th data-i18n="comment">Comment</th><th data-i18n="status">Status</th><th data-i18n="date">Date</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="commentsTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 7. AUTHORS / USERS -->
+        <section id="section-users" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="users">Authors / Users</h2><p class="muted" data-i18n="usersDesc">Manage user records, roles and status.</p></div><button id="addUserBtn" class="btn primary" type="button" data-i18n="addUser">Add User</button></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="name">Name</th><th>Email</th><th data-i18n="role">Role</th><th data-i18n="status">Status</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="usersTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 8. PAGES -->
+        <section id="section-pages" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="pages">Pages</h2><p class="muted" data-i18n="pagesDesc">Manage page records from the dashboard.</p></div><button id="addPageBtn" class="btn primary" type="button" data-i18n="addPage">Add Page</button></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="title">Title</th><th data-i18n="status">Status</th><th data-i18n="date">Date</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="pagesTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 9. APPEARANCE -->
+        <section id="section-appearance" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="appearance">Appearance</h2><p class="muted" data-i18n="appearanceDesc">Configure prototype presentation settings.</p></div></div>
+          <article class="panel">
+            <form id="appearanceForm" class="form-grid">
+              <label><span data-i18n="siteTitle">Site Title</span><input id="appearanceSiteTitle" required /></label>
+              <label><span data-i18n="logoText">Logo Text</span><input id="appearanceLogo" maxlength="6" /></label>
+              <label><span data-i18n="themeMode">Theme Mode</span><select id="appearanceTheme"><option value="light" data-i18n="light">Light</option><option value="dark" data-i18n="dark">Dark</option></select></label>
+              <label><span data-i18n="accentColor">Accent Color</span><input id="appearanceAccent" type="color" value="#5b5bd6" /></label>
+              <label class="full-span"><span data-i18n="homepageSections">Homepage Sections (prototype note)</span><textarea id="appearanceSections" rows="3"></textarea></label>
+              <div class="form-actions full-span"><button class="btn primary" type="submit" data-i18n="saveChanges">Save Changes</button></div>
+            </form>
+          </article>
+        </section>
+
+        <!-- 10. ADVERTISEMENT MANAGEMENT -->
+        <section id="section-ads" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="ads">Advertisement Management</h2><p class="muted" data-i18n="adsDesc">Manage ads, dates, status and prototype performance.</p></div><button id="addAdBtn" class="btn primary" type="button" data-i18n="addAd">Add Advertisement</button></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="name">Name</th><th data-i18n="type">Type</th><th data-i18n="location">Location</th><th data-i18n="status">Status</th><th data-i18n="startDate">Start Date</th><th data-i18n="endDate">End Date</th><th data-i18n="impressions">Impressions</th><th data-i18n="clicks">Clicks</th><th data-i18n="actions">Actions</th></tr></thead><tbody id="adsTableBody"></tbody></table></div>
+        </section>
+
+        <!-- 11. SEO -->
+        <section id="section-seo" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="seo">SEO</h2><p class="muted" data-i18n="seoDesc">Manage frontend SEO metadata fields.</p></div></div>
+          <article class="panel">
+            <form id="seoForm" class="form-grid">
+              <label><span data-i18n="metaTitle">Meta Title</span><input id="seoTitle" /></label>
+              <label><span data-i18n="slug">URL / Slug</span><input id="seoSlug" /></label>
+              <label class="full-span"><span data-i18n="metaDescription">Meta Description</span><textarea id="seoDescription" rows="3"></textarea></label>
+              <label><span data-i18n="keywords">Keywords</span><input id="seoKeywords" /></label>
+              <label><span data-i18n="featuredImage">Featured Image URL</span><input id="seoFeaturedImage" /></label>
+              <label><span data-i18n="openGraph">Open Graph Title</span><input id="seoOgTitle" /></label>
+              <label><span data-i18n="sitemap">Sitemap</span><select id="seoSitemap"><option value="enabled" data-i18n="enabled">Enabled</option><option value="disabled" data-i18n="disabled">Disabled</option></select></label>
+              <label><span data-i18n="robots">Robots</span><select id="seoRobots"><option value="index,follow">index, follow</option><option value="noindex,nofollow">noindex, nofollow</option></select></label>
+              <div class="form-actions full-span"><button class="btn primary" type="submit" data-i18n="saveChanges">Save Changes</button></div>
+            </form>
+          </article>
+        </section>
+
+        <!-- 12. ANALYTICS -->
+        <section id="section-analytics" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="analytics">Analytics</h2><p class="muted" data-i18n="analyticsDesc">Prototype analytics calculated from sample data.</p></div></div>
+          <div id="analyticsCards" class="stats-grid"></div>
+          <div class="two-column-layout">
+            <article class="panel"><div class="panel-head"><h3 data-i18n="popularPosts">Popular Posts</h3></div><div id="popularPostsList" class="list-stack"></div></article>
+            <article class="panel"><div class="panel-head"><h3 data-i18n="trafficSources">Traffic Sources</h3></div><div id="trafficSourcesList" class="progress-list"></div></article>
+          </div>
+          <div class="two-column-layout">
+            <article class="panel"><div class="panel-head"><h3 data-i18n="deviceStats">Device Statistics</h3></div><div id="deviceStatsList" class="progress-list"></div></article>
+            <article class="panel"><div class="panel-head"><h3 data-i18n="geographicStats">Geographic Statistics</h3></div><div id="geoStatsList" class="progress-list"></div></article>
+          </div>
+        </section>
+
+        <!-- 13. NOTIFICATIONS -->
+        <section id="section-notifications" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="notifications">Notifications</h2><p class="muted" data-i18n="notificationsDesc">Editorial and system events.</p></div><button id="markAllNotificationsBtn" class="btn secondary" type="button" data-i18n="markAllRead">Mark All Read</button></div>
+          <div id="notificationsList" class="notification-list"></div>
+        </section>
+
+        <!-- 14. SETTINGS -->
+        <section id="section-settings" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="settings">Settings</h2><p class="muted" data-i18n="settingsDesc">General prototype configuration.</p></div></div>
+          <article class="panel">
+            <form id="settingsForm" class="form-grid">
+              <label><span data-i18n="blogName">Blog Name</span><input id="settingsBlogName" required /></label>
+              <label><span data-i18n="adminEmail">Admin Email</span><input id="settingsEmail" type="email" /></label>
+              <label><span data-i18n="postsPerPage">Posts Per Page</span><input id="settingsPostsPerPage" type="number" min="1" max="100" /></label>
+              <label><span data-i18n="defaultPostStatus">Default Post Status</span><select id="settingsDefaultStatus"><option>Draft</option><option>Pending Approval</option><option>Published</option></select></label>
+              <label><span data-i18n="commentsDefault">Comments Default</span><select id="settingsComments"><option value="enabled" data-i18n="enabled">Enabled</option><option value="disabled" data-i18n="disabled">Disabled</option></select></label>
+              <label><span data-i18n="securityMode">Security Demo Mode</span><select id="settingsSecurity"><option value="role-based" data-i18n="roleBased">Role-based UI</option></select></label>
+              <div class="form-actions full-span"><button class="btn primary" type="submit" data-i18n="saveChanges">Save Changes</button></div>
+            </form>
+          </article>
+        </section>
+
+        <!-- 15. SYSTEM / LOGS -->
+        <section id="section-logs" class="dashboard-section admin-only-section">
+          <div class="section-heading"><div><h2 data-i18n="logs">System / Logs</h2><p class="muted" data-i18n="logsDesc">Prototype login, user and admin activity records.</p></div><button id="clearLogsBtn" class="btn danger-outline" type="button" data-i18n="clearLogs">Clear Logs</button></div>
+          <div class="toolbar"><select id="logTypeFilter"><option value="all" data-i18n="allTypes">All types</option><option>Login</option><option>User Activity</option><option>Post Activity</option><option>Admin Action</option><option>Error</option><option>Security</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="time">Time</th><th data-i18n="type">Type</th><th data-i18n="actor">Actor</th><th data-i18n="action">Action</th><th data-i18n="details">Details</th></tr></thead><tbody id="logsTableBody"></tbody></table></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- =========================
+       MODAL
+  ========================== -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h2 id="modalTitle">Modal</h2>
+        <button class="icon-btn" type="button" data-close-modal aria-label="Close">×</button>
+      </div>
+      <form id="modalForm" class="form-grid" novalidate></form>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
